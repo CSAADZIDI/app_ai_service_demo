@@ -9,7 +9,7 @@ on:
 env:
   IMAGE_NAME: azurecontainerregistryazcs.azurecr.io/django-app
   AZURE_WEBAPP_NAME: demowebapp
-  AZURE_RESOURCE_GROUP: cssadRG
+  AZURE_RESOURCE_GROUP: csaadRG  # Mis à jour avec ton groupe de ressources
 
 jobs:
   lint:
@@ -71,7 +71,7 @@ jobs:
     - name: Login to Azure Container Registry
       uses: azure/docker-login@v1
       with:
-        login-server: ${{ secrets.AZURE_ACR_LOGIN_SERVER}}
+        login-server: ${{ secrets.AZURE_ACR_LOGIN_SERVER }}
         username: ${{ secrets.AZURE_ACR_USERNAME }}
         password: ${{ secrets.AZURE_ACR_PASSWORD }}
 
@@ -83,7 +83,7 @@ jobs:
         tags: |
           ${{ env.IMAGE_NAME }}:latest
           ${{ env.IMAGE_NAME }}:${{ github.sha }}
-        
+
   deploy:
     name: Deploy to Azure Web App
     runs-on: ubuntu-latest
@@ -93,7 +93,7 @@ jobs:
     - name: Azure Login
       uses: azure/login@v1
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        creds: ${{ secrets.AZURE_CREDENTIALS }}  # SP limité à csaadRG
 
     - name: Deploy container to Web App
       uses: azure/webapps-container-deploy@v2
