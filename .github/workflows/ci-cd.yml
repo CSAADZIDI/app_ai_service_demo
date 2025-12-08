@@ -6,27 +6,32 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  IMAGE_NAME: azurecontainerregistryazcs.azurecr.io/django-app
+  AZURE_WEBAPP_NAME: demowebapp
+  AZURE_RESOURCE_GROUP: cssadRG
+
 jobs:
   lint:
     name: Lint Code
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
 
-      - name: Install flake8
-        run: |
-          python -m pip install --upgrade pip
-          pip install flake8
+    - name: Install flake8
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8
 
-      - name: Run flake8
-        run: flake8 .
+    - name: Run flake8
+      run: flake8 .
 
   test:
     name: Unit Tests
@@ -34,37 +39,67 @@ jobs:
     needs: lint
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
 
-      - name: Run tests
-        run: pytest -v
+    - name: Run tests
+      run: pytest -v
 
-  build:
-    name: Build Docker Image
+  build-and-push:
+    name: Build & Push Docker image to ACR
     runs-on: ubuntu-latest
     needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+    - name: Docker Buildx
+      uses: docker/setup-buildx-action@v3
 
-      - name: Build Docker image locally
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: false        # <-- Important: ne pas pousser
-          tags: django-app:ci-build  # tag local
+    - name: Login to Azure Container Registry
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ secrets.AZURE_ACR_LOGIN_SERVER}}
+        username: ${{ secrets.AZURE_ACR_USERNAME }}
+        password: ${{ secrets.AZURE_ACR_PASSWORD }}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        tags: |
+          ${{ env.IMAGE_NAME }}:latest
+          ${{ env.IMAGE_NAME }}:${{ github.sha }}
+        cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache
+        cache-to: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache,mode=max
+
+  deploy:
+    name: Deploy to Azure Web App
+    runs-on: ubuntu-latest
+    needs: build-and-push
+
+    steps:
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Deploy container to Web App
+      uses: azure/webapps-container-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        resource-group: ${{ env.AZURE_RESOURCE_GROUP }}
+        images: ${{ env.IMAGE_NAME }}:latest
