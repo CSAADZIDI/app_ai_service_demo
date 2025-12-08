@@ -96,7 +96,7 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}  # SP limité à csaadRG
 
     - name: Deploy container to Web App
-      uses: azure/webapps-container-deploy@v2
+      uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         resource-group: ${{ env.AZURE_RESOURCE_GROUP }}
