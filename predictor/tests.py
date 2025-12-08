@@ -11,6 +11,7 @@ from django.conf import settings
 import base64
 from requests.exceptions import RequestException
 
+
 class PredictorFormTests(TestCase):
     """Tests pour le formulaire de prédiction."""
 
@@ -92,7 +93,6 @@ class PredictorViewsTests(TestCase):
         args, kwargs = mock_post.call_args
         self.assertIn('Authorization', kwargs['headers'])
         self.assertEqual(kwargs['headers']['Authorization'], f"Basic {token}")
-
 
     @patch('predictor.views.requests.post')
     def test_post_valid_form_api_exception(self, mock_post):
