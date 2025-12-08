@@ -1,0 +1,7 @@
+django
+requests
+python-dotenv
+pytest
+flake8
+pytest-django
+gunicorn

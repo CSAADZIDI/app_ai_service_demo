@@ -1,0 +1,35 @@
+<!-- predictor/templates/predictor/form.html -->
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Prédiction prix - Lille</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+<body>
+  <h1>Prédiction du prix au m² — Lille</h1>
+
+  {% if messages %}
+    <ul>
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Envoyer à FastAPI</button>
+  </form>
+
+  <p>Exemple payload JSON envoyé :</p>
+  <pre>{
+  "surface_bati": 80,
+  "nombre_pieces": 4,
+  "type_local": "maison",
+  "surface_terrain": 150,
+  "nombre_lots": 1
+}</pre>
+</body>
+</html>

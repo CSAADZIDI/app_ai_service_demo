@@ -1,0 +1,29 @@
+<!-- predictor/templates/predictor/result.html -->
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Résultat prédiction</title>
+</head>
+<body>
+  <h1>Résultat de la prédiction</h1>
+
+  <h2>Données envoyées</h2>
+  <ul>
+    <li>Surface bâtie : {{ input.surface_bati }} m²</li>
+    <li>Nombre pièces : {{ input.nombre_pieces }}</li>
+    <li>Type local : {{ input.type_local }}</li>
+    <li>Surface terrain : {{ input.surface_terrain }} m²</li>
+    <li>Nombre lots : {{ input.nombre_lots }}</li>
+  </ul>
+
+  <h2>Réponse du modèle</h2>
+  <ul>
+    <li>Prix m² estimé : {{ result.prix_m2_estime }}</li>
+    <li>Ville modèle : {{ result.ville_modele }}</li>
+    <li>Modèle utilisé : {{ result.model }}</li>
+  </ul>
+
+  <p><a href="{% url 'predictor:predict' %}">Faire une autre prédiction</a></p>
+</body>
+</html>
