@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 env:
-  IMAGE_NAME: azurecontainerregistryazcs.azurecr.io/django-app
+  IMAGE_NAME: ${{ secrets.AZURE_ACR_LOGIN_SERVER }}/django-app
   AZURE_WEBAPP_NAME: demowebapp
   AZURE_RESOURCE_GROUP: csaadRG  # Mis à jour avec ton groupe de ressources
 
