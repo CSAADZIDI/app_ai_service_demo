@@ -101,9 +101,10 @@ jobs:
         --name ${{ env.AZURE_WEBAPP_NAME }} \
         --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
         --docker-custom-image-name ${{ env.IMAGE_NAME }}:latest \
-        --registry-login-server ${{ secrets.AZURE_ACR_LOGIN_SERVER }} \
-        --registry-username ${{ secrets.AZURE_ACR_USERNAME }} \
-        --registry-password ${{ secrets.AZURE_ACR_PASSWORD }}
+        --docker-registry-server-url https://${{ secrets.AZURE_ACR_LOGIN_SERVER }} \
+        --docker-registry-server-user ${{ secrets.AZURE_ACR_USERNAME }} \
+        --docker-registry-server-password ${{ secrets.AZURE_ACR_PASSWORD }}
+
 
     - name: Restart App Service
       run: |
