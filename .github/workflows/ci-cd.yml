@@ -9,7 +9,7 @@ on:
 env:
   IMAGE_NAME: ${{ secrets.AZURE_ACR_LOGIN_SERVER }}/django-app
   AZURE_WEBAPP_NAME: demowebapp
-  AZURE_RESOURCE_GROUP: csaadRG  # Mis à jour avec ton groupe de ressources
+  AZURE_RESOURCE_GROUP: csaadRG  
 
 jobs:
   lint:
@@ -99,5 +99,5 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        resource-group: ${{ env.AZURE_RESOURCE_GROUP }}
+        resource-group-name: ${{ env.AZURE_RESOURCE_GROUP }}
         images: ${{ env.IMAGE_NAME }}:latest
