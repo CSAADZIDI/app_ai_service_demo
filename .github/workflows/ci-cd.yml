@@ -1,4 +1,4 @@
-name: CI/CD Django App
+name: CI/CD Django/Web App
 
 on:
   push:
